@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="270dp"
+    android:layout_margin="12dp"
+    android:background="@drawable/background"
+    android:elevation="8dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_slide"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/ic_launcher_background"/>
+
+    <TextView
+        android:id="@+id/prev_title"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:layout_marginLeft="12dp"
+        android:textColor="#000"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/prev_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:text="Name"
+        android:textSize="14dp" />
+    </LinearLayout>
+
+
+
+
+
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/current_image"
+        android:layout_width="170dp"
+        android:layout_height="230dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/head" />
+
+  <Button
+      android:id="@+id/subscribe_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+     android:layout_margin="10dp"
+      android:layout_below="@+id/current_image"
+      android:background="@drawable/background_button"
+      android:textColor="#fff"
+      android:text="SUBCRIBE"
+      android:textSize="20dp"/>
+    <TextView
+        android:id="@+id/sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="jdckjadnvjkadnv"
+        android:layout_below="@+id/subscribe_btn"
+        android:layout_centerHorizontal="true"
+        android:textSize="18dp"
+        android:textColor="#000"/>
+    <TextView
+        android:id="@+id/sub_date"
+        android:layout_below="@+id/sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:layout_centerInParent="true"
+        android:textSize="15dp"
+        android:textColor="#8c8989"/>
+    <TextView
+        android:id="@+id/head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="18dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:text="Subcribe and Read all issues for free"/>
+
+</RelativeLayout>
