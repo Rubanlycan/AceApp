@@ -1,5 +1,7 @@
 package com.ionicframework.itech719214.fragment;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +10,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,11 +30,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.ionicframework.itech719214.Adapter.CustomPageAdapter;
+import com.ionicframework.itech719214.Adapter.RecyclerListView;
+import com.ionicframework.itech719214.BuildConfig;
+import com.ionicframework.itech719214.RecyclerClickListener;
 import com.squareup.picasso.Picasso;
 import com.ionicframework.itech719214.ApiClass;
 import com.ionicframework.itech719214.Data;
 import com.ionicframework.itech719214.R;
 import com.ionicframework.itech719214.View_All_Activity;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -45,11 +57,17 @@ public class Home_fragment extends Fragment {
     ViewFlipper v_flipper;
     TextView txt_view, prev_txt, textView_title, textView_date;
     public static TextView data;
-    LinearLayout gallery;
-    int i;
+
     ImageView img_latest,img_slide,sub_ads;
     LayoutInflater inflater, gal_inflater;
-    String url;
+
+    List<Data> banner_list;
+
+    RecyclerView recyclerView;
+    List<Data> previous_list;
+    public final int view_i = 1;
+
+    CustomPageAdapter mCustomPageAdapter;
 
     @Nullable
     @Override
@@ -58,14 +76,37 @@ public class Home_fragment extends Fragment {
 
         getData();
         getData_previous();
+        getAdsBanner();
 
-        gallery = view.findViewById(R.id.gallery);
+
         txt_view = view.findViewById(R.id.txt_view_all);
         prev_txt = view.findViewById(R.id.txt_previous);
         img_latest = view.findViewById(R.id.img_latest);
         textView_date = view.findViewById(R.id.textView_date);
         textView_title = view.findViewById(R.id.textView_title);
         gal_inflater = LayoutInflater.from(getContext());
+        sub_ads = view.findViewById(R.id.sub_ads);
+        v_flipper = view.findViewById(R.id.v_flipper);
+        mCustomPageAdapter = new CustomPageAdapter(getContext());
+
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,true));
+        recyclerView.addOnItemTouchListener(
+                new RecyclerClickListener(getContext(), new RecyclerClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        issuebrowse(previous_list.get(position).getLink());
+
+                    }
+                })
+        );
+
+        sub_ads.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swapFragment();
+            }
+        });
 
         swipeRefreshLayout = view.findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -104,10 +145,35 @@ public class Home_fragment extends Fragment {
         {
             case R.id.share:
                 Toast.makeText(getContext(),"share",Toast.LENGTH_LONG).show();
+                try {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ACE Update");
+                    String shareMessage= "Install our ACE Update Mobile App on play store";
+                    shareMessage = shareMessage + "\n" + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+                    startActivity(Intent.createChooser(shareIntent, "choose one"));
+                } catch(Exception e) {
+                    //e.toString();
+                }
+
                 break;
 
             case R.id.feedback:
                 Toast.makeText(getContext(),"feedback",Toast.LENGTH_LONG).show();
+                Uri uri = Uri.parse("market://details?id=" + getContext().getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + getContext().getPackageName())));
+                }
                 break;
         }
         return true;
@@ -147,23 +213,18 @@ public class Home_fragment extends Fragment {
                   Picasso.with(getContext()).load("https://aceupdate.com/ACE_App/CoverPage/"+response.body().get(0).getImage()).into(img_latest);
 
 
-                  img_latest.setOnLongClickListener(new View.OnLongClickListener() {
-                      @Override
-                      public boolean onLongClick(View v) {
-                       shareIssueLink(response);
-                      return true;
-                      }
-                  });
+//                  img_latest.setOnLongClickListener(new View.OnLongClickListener() {
+//                      @Override
+//                      public boolean onLongClick(View v) {
+//                       shareIssueLink(response);
+//                      return true;
+//                      }
+//                  });
 
                     img_latest.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            url = response.body().get(0).getLink();
-                            Log.i("onresponse ", "url" + url);
-                            Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
-                            Log.i("onClick: ", "url" + uri);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
+                          issuebrowse(response.body().get(0).getLink());
                         }
                     });
                 }
@@ -205,29 +266,8 @@ public class Home_fragment extends Fragment {
             public void onResponse(Call<List<Data>> call, final Response<List<Data>> response) {
                 Log.e("Response", response.message());
                 if (response.isSuccessful()) {
-                    for ( i = 0; i <= 2; i++) {
-
-                        View gview = gal_inflater.inflate(R.layout.item, gallery, false);
-                        TextView text = gview.findViewById(R.id.prev_title);
-                        text.setText(response.body().get(i).getTitle());
-                        TextView text2 = gview.findViewById(R.id.prev_date);
-                        text2.setText(response.body().get(i).getName());
-                          img_slide = gview.findViewById(R.id.img_slide);
-                        Picasso.with(getContext())
-                                .load("https://aceupdate.com/ACE_App2/CoverPage2/" + response.body().get(i).getImage())
-                                .into(img_slide);
-                         img_slide.setOnLongClickListener(new View.OnLongClickListener() {
-                             @Override
-                             public boolean onLongClick(View v) {
-
-
-                                 return true;
-                             }
-                         });
-                        gallery.addView(gview);
-
-                    }
-
+                 previous_list = response.body();
+                     recyclerView.setAdapter(new RecyclerListView(previous_list));
                 }
             }
 
@@ -240,26 +280,96 @@ public class Home_fragment extends Fragment {
 
     }
 
-    public void flipImage(int image) {
-        ImageView imageView = new ImageView(getContext());
-        imageView.setBackgroundResource(image);
-
-        v_flipper.addView(imageView);
-        v_flipper.setFlipInterval(3000);
-        v_flipper.setAutoStart(true);
-
-        v_flipper.setInAnimation(getContext(), android.R.anim.slide_in_left);
-        v_flipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
-
-    }
-    private void shareIssueLink( Response<List<Data>> response)
+    public void getAdsBanner()
     {
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_TEXT,response.body().get(0).getLink());
-        startActivity(Intent.createChooser(i,"share link"));
+        //Creating a retrofit object
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiClass.LATEST_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()) //Here we are using the GsonConverterFactory to directly convert json data to object
+                .build();
+
+        //creating the api interface
+        ApiClass api = retrofit.create(ApiClass.class);
+
+        //now making the call object
+        //Here we are using the api method that we created inside the api interface
+        Call<List<Data>> call = api.getProducts_ADds();
+
+        //then finallly we are making the call using enqueue()
+        //it takes callback interface as an argument
+        //and callback is having two methods onRespnose() and onFailure
+        //if the request is successfull we will get the correct response and onResponse will be executed
+        //if there is some error we will get inside the onFailure() method
+        call.enqueue(new Callback<List<Data>>() {
+
+
+            @Override
+            public void onResponse(Call<List<Data>> call, final Response<List<Data>> response) {
+                Log.e("Response", response.message());
+                if (response.isSuccessful()) {
+
+
+                   String images[] = {response.body().get(0).getSB_1st_Path()};
+
+                   for (String image : images)
+                   {
+                       flipImage(image,response);
+                   }
+
+                  }
+
+            }
+
+
+            @Override
+            public void onFailure(Call<List<Data>> call, Throwable t) {
+                Log.e("Response", t.getMessage());
+            }
+        });
 
     }
+
+
+
+    public void flipImage(String image, final Response<List<Data>> response) {
+        ImageView imageView = new ImageView(getContext());
+
+        Picasso.with(getContext()).load(response.body().get(0).getSB_1st_Path()).into(imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                issuebrowse(response.body().get(0).getSB_1st_Link());
+            }
+        });
+           v_flipper.addView(imageView);
+           v_flipper.setFlipInterval(3000);
+           v_flipper.setAutoStart(true);
+
+           v_flipper.setInAnimation(getContext(), android.R.anim.slide_in_left);
+           v_flipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
+       }
+
+
+
+
+
+//    private void shareIssueLink( Response<List<Data>> response)
+//    {
+//        try {
+//            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//            shareIntent.setType("text/plain");
+//            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ACE Update");
+//            String shareMessage = " Read Our ACE Update Latest Issue " + response.body().get(0).getName();
+//            shareMessage = shareMessage + "\n" + response.body().get(0).getLink() + "\n\n";
+//            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+//            startActivity(Intent.createChooser(shareIntent, "choose one"));
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public Bitmap StringToBitMap(String encodedString) {
         try {
@@ -275,5 +385,24 @@ public class Home_fragment extends Fragment {
         }
 
 
+    }
+
+    public  void issuebrowse( String url)
+    {
+
+        Log.i("onresponse ", "url" + url);
+        Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
+        Log.i("onClick: ", "url" + uri);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    public  void swapFragment()
+    {
+        Subscribe_fragment subscribe_fragment = new Subscribe_fragment();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_container, subscribe_fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

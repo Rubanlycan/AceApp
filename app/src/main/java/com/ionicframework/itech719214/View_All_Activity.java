@@ -1,27 +1,27 @@
 package com.ionicframework.itech719214;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.squareup.picasso.Picasso;
+import com.ionicframework.itech719214.Adapter.RecyclerListView;
 
 import java.util.List;
 
@@ -31,20 +31,22 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class View_All_Activity extends AppCompatActivity implements BillingProcessor.IBillingHandler {
+public class View_All_Activity extends AppCompatActivity implements  BillingProcessor.IBillingHandler{
 
-
-     View view;
-     RatingBar rating;
+    View view;
     RelativeLayout view_relative;
-    TextView text1,text2,mag_title,text_rating;
+    List<Data> previous_view_all;
     ImageView img_all;
     Button buy;
-    ScrollView view_scroll;
+
     LinearLayout gallery;
     LayoutInflater inflater;
-   BillingProcessor bp;
-   private  static  final String  bill_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj2bqyboAT7u2CTC/mX7ajy+RHubmAFipgfRQnVxcOazdoOH1Gbb5T2RThT/Sth+1yfamZEhdEFBjps7cdLej+3SuCnvVNA2kPhZ6OXY2zaCQcwQVa+pJJrCiYgldZmj7z9gMsWetSflD9t6V+TowMvGFz7XCKicOyN7UKopm7vEoUaIjDBMAEMjei4jZhh24BpFr5ZIIxg7v0BaE2Nq+rtvweeBHgkdfy9P8gZkSI6PERPq+YXkF0eREOMnkPRRwQMA3HSjzWabRaSJthJrKubMHQTM/8UwlHg3FTq58EdPQwMisvymceayd7U37jAFiy7P8qJTGcpLJqEj84oWo6wIDAQAB";
+    BillingProcessor bp;
+
+    RecyclerView recyclerView;
+    public final int view_j =2;
+
+    private static final String bill_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj2bqyboAT7u2CTC/mX7ajy+RHubmAFipgfRQnVxcOazdoOH1Gbb5T2RThT/Sth+1yfamZEhdEFBjps7cdLej+3SuCnvVNA2kPhZ6OXY2zaCQcwQVa+pJJrCiYgldZmj7z9gMsWetSflD9t6V+TowMvGFz7XCKicOyN7UKopm7vEoUaIjDBMAEMjei4jZhh24BpFr5ZIIxg7v0BaE2Nq+rtvweeBHgkdfy9P8gZkSI6PERPq+YXkF0eREOMnkPRRwQMA3HSjzWabRaSJthJrKubMHQTM/8UwlHg3FTq58EdPQwMisvymceayd7U37jAFiy7P8qJTGcpLJqEj84oWo6wIDAQAB";
 
 
     @Override
@@ -61,17 +63,35 @@ public class View_All_Activity extends AppCompatActivity implements BillingProce
             }
         });
 
+
+        recyclerView = findViewById(R.id.recycler_list_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addOnItemTouchListener(
+                new RecyclerClickListener(this, new RecyclerClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                    viewLink(previous_view_all.get(position).link);
+
+                    }
+                })
+        );
+
+
+
+
         bp = new BillingProcessor(View_All_Activity.this, bill_key, this);
         bp.initialize();
 
-         view_relative = findViewById(R.id.view_relative);
-        gallery = findViewById(R.id.gallery);
+        view_relative = findViewById(R.id.view_relative);
+
         inflater = LayoutInflater.from(this);
 
 
-      Data_previous();
+        Data_previous();
 
     }
+
+
+
     private void Data_previous() {
 
         //Creating a retrofit object
@@ -97,48 +117,19 @@ public class View_All_Activity extends AppCompatActivity implements BillingProce
 
             @Override
             public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
-                Log.e("Response","response =" + response.message());
-                if (response.isSuccessful())
-                {
-                    for (int i =0;i<=7;i++)
-                    {
+                Log.e("Response", "response =" + response.message());
+                if (response.isSuccessful()) {
+                    previous_view_all = response.body();
+                    recyclerView.setAdapter(new RecyclerListView(previous_view_all));
 
-                        View view = inflater.inflate(R.layout.view_all_item,gallery,false);
-                        mag_title =view.findViewById(R.id.mag_title);
-                        text1=view.findViewById(R.id.text1);
-                        text1 .setText(response.body().get(i).title);
-                        text2 = view.findViewById(R.id.text2);
-                        text2.setText(response.body().get(i).name);
-                        rating = view.findViewById(R.id.star_rating);
-                        rating.setRating(response.body().get(i).getRating());
-                        text_rating  = view.findViewById(R.id.textrating);
-                        text_rating.setText((int) response.body().get(i).rating);
-
-
-//                        buy = view.findViewById(R.id.Buy_button);
-//                        buy.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                bp.purchase(View_All_Activity.this, "aceupdate_mar_2019");
-//                                Log.i("tag","purchase api"+bp);
-//                            }
-//                        });
-                        img_all = view.findViewById(R.id.img_all);
-                        Picasso.with(View_All_Activity.this)
-                                .load("https://aceupdate.com/ACE_App2/CoverPage2/" + response.body().get(i).image)
-                                .into(img_all);
-                        gallery.addView(view);
-
-                    }
 
                 }
             }
 
 
-
             @Override
             public void onFailure(Call<List<Data>> call, Throwable t) {
-                Log.e("Response",t.getMessage());
+                Log.e("Response", t.getMessage());
             }
         });
 
@@ -146,7 +137,7 @@ public class View_All_Activity extends AppCompatActivity implements BillingProce
 
     @Override
     public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
-        Toast.makeText(this,"successfully purchased",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "successfully purchased", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -156,7 +147,7 @@ public class View_All_Activity extends AppCompatActivity implements BillingProce
 
     @Override
     public void onBillingError(int errorCode, @Nullable Throwable error) {
-        Toast.makeText(this,"Failed in purchased",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Failed in purchased", Toast.LENGTH_LONG).show();
 
     }
 
@@ -180,4 +171,30 @@ public class View_All_Activity extends AppCompatActivity implements BillingProce
         }
         super.onDestroy();
     }
-}
+
+    public void viewLink(String url) {
+        try {
+            Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
+            Log.i("onClick: ", "url" + uri);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+//    private void shareIssueLink( String response,String date)
+//    {
+//        Intent i = new Intent(Intent.ACTION_SEND);
+//        i.setType("text/plain");
+//        String msg = "Read our Ace Update "+date+"issue for free\n";
+//        i.putExtra(Intent.EXTRA_TEXT,msg + response);
+//        startActivity(Intent.createChooser(i,"share link"));
+//
+//    }
+
+
+
+    }
+

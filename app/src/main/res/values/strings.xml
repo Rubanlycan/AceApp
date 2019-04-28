@@ -5,6 +5,10 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="ace_1year">Rs 2400.00/Year</string>
+    <string name="ace_2years">Rs 4800.00/2 Years</string>
+    <string name="ace_3years">Rs 7200.00/3 Years</string>
+    <string name="terms">Terms and Conditions Apply</string>
     <string name="title_notifications">Notifications</string>
     <string name="ace_desc">ACEUpdate.com is India’s first complete news and analysis on construction and infrastructure sectors. It offers latest update and detail analysis of information in regards to the architectural update, infrastructure development, construction activities, real estate update, construction equipment, material handlings, project financing etc.</string>
 </resources>

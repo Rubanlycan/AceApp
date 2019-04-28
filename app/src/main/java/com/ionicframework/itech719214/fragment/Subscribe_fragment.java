@@ -1,5 +1,7 @@
 package com.ionicframework.itech719214.fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
+import com.ionicframework.itech719214.View_All_Activity;
 import com.squareup.picasso.Picasso;
 import com.ionicframework.itech719214.ApiClass;
 import com.ionicframework.itech719214.Data;
@@ -27,12 +32,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Subscribe_fragment extends Fragment {
+public class Subscribe_fragment extends Fragment implements BillingProcessor.IBillingHandler {
 
     Button sub_button;
     TextView txt_title,txt_date;
     ImageView cur_image;
     String url;
+    BillingProcessor bp;
+    private  static  final String  bill_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj2bqyboAT7u2CTC/mX7ajy+RHubmAFipgfRQnVxcOazdoOH1Gbb5T2RThT/Sth+1yfamZEhdEFBjps7cdLej+3SuCnvVNA2kPhZ6OXY2zaCQcwQVa+pJJrCiYgldZmj7z9gMsWetSflD9t6V+TowMvGFz7XCKicOyN7UKopm7vEoUaIjDBMAEMjei4jZhh24BpFr5ZIIxg7v0BaE2Nq+rtvweeBHgkdfy9P8gZkSI6PERPq+YXkF0eREOMnkPRRwQMA3HSjzWabRaSJthJrKubMHQTM/8UwlHg3FTq58EdPQwMisvymceayd7U37jAFiy7P8qJTGcpLJqEj84oWo6wIDAQAB";
+       private final String[] ACE_SUBSCRIBE = {"aceupdate_subscription_1year","aceupdate_subscription_2year","aceupdate_subscription_3year"};
 
 
     @Nullable
@@ -43,11 +51,48 @@ public class Subscribe_fragment extends Fragment {
        txt_title = view.findViewById(R.id.sub_title);
        txt_date = view.findViewById(R.id.sub_date);
        cur_image = view.findViewById(R.id.current_image);
+       sub_button = view.findViewById(R.id.subscribe_btn);
+       sub_button.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Log.i("TAG","subscription"+bp.getSubscriptionListingDetails(ACE_SUBSCRIBE[1]));
+               AlertDialog.Builder sub_dialog = new AlertDialog.Builder(getContext());
+               View sub_view = getLayoutInflater().inflate(R.layout.subscribe_dialog,null);
+               Button sub_1year = sub_view.findViewById(R.id.sub_1year);
+               sub_1year.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       bp.subscribe((Activity) getContext(),ACE_SUBSCRIBE[0]);
+                   }
+               });
+               Button sub_2year = sub_view.findViewById(R.id.sub_2year);
+               sub_2year.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       bp.subscribe((Activity) getContext(),ACE_SUBSCRIBE[1]);
+                   }
+               });
+               Button sub_3year = sub_view.findViewById(R.id.sub_3year);
+               sub_3year.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       bp.subscribe((Activity) getContext(),ACE_SUBSCRIBE[2]);
+                   }
+               });
+               sub_dialog.setView(sub_view);
+               sub_dialog.create();
+               sub_dialog.show();
+           }
+       });
 
 
     getData();
 
-    return view;
+        bp = new BillingProcessor(getContext(), bill_key, this);
+        bp.initialize();
+
+
+        return view;
     }
     public void getData() {
 
@@ -103,5 +148,41 @@ public class Subscribe_fragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
+
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+
+    }
+
+    @Override
+    public void onBillingError(int errorCode, @Nullable Throwable error) {
+
+    }
+
+    @Override
+    public void onBillingInitialized() {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!bp.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (bp != null) {
+            bp.release();
+            Log.i("tag", "onDestroy: destroyed ");
+        }
+        super.onDestroy();
     }
 }

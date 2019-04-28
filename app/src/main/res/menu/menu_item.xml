@@ -11,5 +11,5 @@
     <item
         android:id="@+id/feedback"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="Share"/>
+        android:title="Feedback"/>
 </menu>

@@ -69,6 +69,7 @@
                     android:textSize="15dp" />
             </LinearLayout>
             <ImageView
+                android:id="@+id/sub_ads"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ace_subscribe"/>
@@ -104,21 +105,12 @@
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontal_previous"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:scrollbars="none">
+             <android.support.v7.widget.RecyclerView
+                 android:id="@+id/recyclerView"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:id="@+id/gallery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+             </android.support.v7.widget.RecyclerView>
             </LinearLayout>
 
             <ImageView

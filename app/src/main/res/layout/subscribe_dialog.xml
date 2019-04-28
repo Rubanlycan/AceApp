@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Subscription"
+        android:textColor="#fff"
+        android:paddingTop="10dp"
+        android:textSize="15dp"
+        android:gravity="center_horizontal"
+        android:background="@drawable/background_button"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:textColor="#999797"
+        android:text="Subscribe and Read our Magazine"/>
+
+    <Button
+        android:id="@+id/sub_1year"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/ace_1year"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/background_button"/>
+    <Button
+        android:id="@+id/sub_2year"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/ace_2years"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/background_button"/>
+    <Button
+        android:id="@+id/sub_3year"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/ace_3years"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center"
+        android:background="@drawable/background_button"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:layout_gravity="right"-->
+        <!--android:textColor="#999797"-->
+        <!--android:text="@string/terms"/>-->
+
+</LinearLayout>

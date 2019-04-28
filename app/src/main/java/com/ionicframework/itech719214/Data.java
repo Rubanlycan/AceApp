@@ -5,8 +5,13 @@ package com.ionicframework.itech719214;
 public class Data {
 
     int id;
+    int SB_ID;
     float rating;
     String name ;
+    String SB_1st_Path;
+    String SB_2st_Path;
+    String SB_3st_Path;
+    String SB_1st_Link;
     String file ;
     String image ;
     String link ;
@@ -18,13 +23,21 @@ public class Data {
     String size ;
     String bool ;
 
-    public Data(int id, float rating,String name, String file, String image, String link, String free_link, String type_img, String type_pdf, String title, String product_id, String size, String bool) {
+
+
+    public Data(int id, int SB_ID, String SB_1st_Path, String SB_2st_Path, String SB_3st_Path, String SB_1st_Link, float rating, String name, String file, String image, String link, String free_link, String type_img, String type_pdf, String title, String product_id, String size, String bool) {
         this.id = id;
+        this.SB_ID = SB_ID;
+        this.SB_1st_Path = SB_1st_Path;
+        this.SB_2st_Path = SB_2st_Path;
+        this.SB_3st_Path = SB_3st_Path;
+        this.SB_1st_Link = SB_1st_Link;
         this.rating = rating;
         this.name = name;
         this.file = file;
         this.image = image;
         this.link = link;
+
         this.free_link = free_link;
         this.type_img = type_img;
         this.type_pdf = type_pdf;
@@ -33,6 +46,49 @@ public class Data {
         this.size = size;
         this.bool = bool;
 
+
+    }
+
+
+
+    public int getSB_ID() {
+        return SB_ID;
+    }
+
+    public void setSB_ID(int SB_ID) {
+        this.SB_ID = SB_ID;
+    }
+
+    public String getSB_1st_Path() {
+        return SB_1st_Path;
+    }
+
+    public void setSB_1st_Path(String SB_1st_Path) {
+        this.SB_1st_Path = SB_1st_Path;
+    }
+
+    public String getSB_2st_Path() {
+        return SB_2st_Path;
+    }
+
+    public void setSB_2st_Path(String SB_2st_Path) {
+        this.SB_2st_Path = SB_2st_Path;
+    }
+
+    public String getSB_3st_Path() {
+        return SB_3st_Path;
+    }
+
+    public void setSB_3st_Path(String SB_3st_Path) {
+        this.SB_3st_Path = SB_3st_Path;
+    }
+
+    public String getSB_1st_Link() {
+        return SB_1st_Link;
+    }
+
+    public void setSB_1st_Link(String SB_1st_Link) {
+        this.SB_1st_Link = SB_1st_Link;
     }
 
     public float getRating() {

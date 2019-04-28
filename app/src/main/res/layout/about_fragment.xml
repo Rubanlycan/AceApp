@@ -54,12 +54,14 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 app:srcCompat="@drawable/ic_email_black_24dp" />
 
             <TextView
+                android:id="@+id/mail_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -78,6 +80,7 @@
         android:layout_alignParentLeft="true">
 
         <ImageView
+            android:id="@+id/fb_link"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginLeft="8dp"
@@ -85,6 +88,7 @@
             android:src="@drawable/facebook" />
 
         <ImageView
+            android:id="@+id/twitter_link"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_centerInParent="true"
@@ -93,6 +97,7 @@
             android:src="@drawable/twitter" />
 
         <ImageView
+            android:id="@+id/ldn_link"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
